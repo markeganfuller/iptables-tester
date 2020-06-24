@@ -1,0 +1,22 @@
+---
+version: '3'
+services:
+  firewall:
+    image: mefdock/util_dock
+    hostname: firewall
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./bashrc:/root/.bashrc
+    environment:
+      TERM: xterm-256color
+    entrypoint: /entrypoint.sh
+
+  external:
+    image: mefdock/util_dock
+    hostname: external
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./bashrc:/root/.bashrc
+    entrypoint: /entrypoint.sh

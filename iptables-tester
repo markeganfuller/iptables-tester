@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#DOCKER_COMPOSE_FILE='/usr/lib/opcoffox/docker-compose.yaml'
+DOCKER_COMPOSE_FILE='docker-compose.yaml'
+CONSOLE_SLEEP=5
+ATTACH_SLEEP=7  # Should be more than CONSOLE_SLEEP
+
+tmux \
+    new-session -s iptables-tester -d \
+                 "docker-compose -f \"${DOCKER_COMPOSE_FILE}\" up" \; \
+    split-window "sleep ${CONSOLE_SLEEP}; docker-compose exec firewall bash" \; \
+    split-window "sleep ${CONSOLE_SLEEP}; docker-compose exec firewall bash" \; \
+    split-window "sleep ${CONSOLE_SLEEP}; docker-compose exec external bash" \; \
+    select-layout even-vertical
+
+echo "Waiting for startup..."
+sleep $ATTACH_SLEEP
+
+tmux send -t iptables-tester.1 iptables Space -L Space -nv ENTER
+tmux send -t iptables-tester.2 ip6tables Space -L Space -nv ENTER
+
+tmux attach -t iptables-tester
+
+#docker-compose -f "${DOCKER_COMPOSE_FILE}" down
