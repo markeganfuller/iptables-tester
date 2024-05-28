@@ -1,5 +1,4 @@
 ---
-version: '3'
 services:
   firewall:
     image: mefdock/util_dock
